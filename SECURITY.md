@@ -14,7 +14,7 @@ We release security patches for the following versions:
 
 **Please do NOT report security vulnerabilities via public GitHub issues.**
 
-Instead, email **security@openclaw.ai** with:
+Instead, email **yuderguerra503@gmail.com** with:
 
 1. **Description** of the vulnerability
 2. **Steps to reproduce** (if applicable)

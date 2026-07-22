@@ -31,8 +31,16 @@
     "payments",
     "payment-gateway"
   ],
-  "author": "",
+  "author": "Yuder Guerra <yuderguerra503@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay.git"
+  },
+  "homepage": "https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay#readme",
+  "bugs": {
+    "url": "https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay/issues"
+  },
   "peerDependencies": {
     "openclaw": ">=2026.7.0"
   },

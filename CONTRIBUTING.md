@@ -12,7 +12,7 @@ Thank you for considering a contribution!
 
 ```bash
 # Clone
-git clone https://github.com/your-org/openclaw-plugin-izipay
+git clone https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay
 cd openclaw-plugin-izipay
 
 # Install (requires pnpm 9+)
@@ -160,4 +160,4 @@ git push --follow-tags
 
 ## Questions?
 
-Open a [Discussion](https://github.com/your-org/openclaw-plugin-izipay/discussions) or check [OpenClaw Discord](https://discord.gg/openclaw).
+Open a [GitHub Issue](https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay/issues) or contact **yuderguerra503@gmail.com**.

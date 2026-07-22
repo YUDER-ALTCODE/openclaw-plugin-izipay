@@ -35,7 +35,7 @@ openclaw plugins install clawhub:openclaw-plugin-izipay
 ### Manual (development)
 
 ```bash
-git clone https://github.com/your-org/openclaw-plugin-izipay
+git clone https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay
 cd openclaw-plugin-izipay
 pnpm install
 pnpm run build
@@ -225,7 +225,11 @@ npm publish
 
 ## License
 
-MIT © [Contributors](CONTRIBUTORS.md)
+MIT © [Yuder Guerra](https://github.com/YUDER-ALTCODE)
+
+## Support
+
+For questions or issues, open a [GitHub Issue](https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay/issues) or contact **yuderguerra503@gmail.com**.
 
 ## Related
 

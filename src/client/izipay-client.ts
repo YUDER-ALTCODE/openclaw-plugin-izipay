@@ -15,6 +15,13 @@ export class IzipayClient {
   constructor(config: IzipayClientConfig) {
     this.apiKey = config.apiKey;
     this.baseUrl = getBaseUrl(config.environment);
+
+    if (config.environment === "sandbox" && !/^(izk_test_|tsk_test_)/.test(config.apiKey)) {
+      throw new Error("Invalid API key format for sandbox");
+    }
+    if (config.environment === "production" && !/^(izk_live_|tsk_live_)/.test(config.apiKey)) {
+      throw new Error("Invalid API key format for production");
+    }
   }
 
   private async request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -22,6 +29,7 @@ export class IzipayClient {
 
     const response = await fetch(url, {
       ...options,
+      method: options.method ?? "GET",
       headers: {
         ...createAuthHeaders({ apiKey: this.apiKey, environment: "sandbox" }),
         ...options.headers,

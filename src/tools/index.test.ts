@@ -89,7 +89,12 @@ describe("Tools", () => {
     });
 
     it("should create payment with minimal params", async () => {
-      mockClient.createPayment.mockResolvedValueOnce(MOCK_PAYMENT_RESPONSE);
+      mockClient.createPayment.mockResolvedValueOnce({
+        ...MOCK_PAYMENT_RESPONSE,
+        amount: 10000,
+        currency: "USD",
+        orderId: "ORD-002",
+      });
 
       const result = await createPaymentTool(
         {
