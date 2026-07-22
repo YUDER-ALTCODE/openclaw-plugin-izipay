@@ -43,13 +43,15 @@ export async function paymentDetailsTool(
 ): Promise<Static<typeof PaymentDetailsResultSchema>> {
   context.signal?.throwIfAborted();
 
-  const apiKey = config.apiKey ?? process.env.IZIPAY_API_KEY;
-  if (!apiKey) {
-    throw new Error("Izipay API key not configured. Set apiKey in plugin config or IZIPAY_API_KEY env var.");
+  const username = config.username ?? process.env.IZIPAY_USERNAME;
+  const password = config.password ?? process.env.IZIPAY_PASSWORD;
+  if (!username || !password) {
+    throw new Error("Izipay credentials not configured. Set username and password in plugin config or IZIPAY_USERNAME and IZIPAY_PASSWORD env vars.");
   }
 
   const client = new IzipayClient({
-    apiKey,
+    username,
+    password,
     environment: config.environment ?? "sandbox",
   });
 

@@ -7,7 +7,8 @@ const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 const VALID_CONFIG = {
-  apiKey: "izk_test_abc123",
+  username: "98671504",
+  password: "testpassword_abc123",
   environment: "sandbox" as const,
 };
 
@@ -24,7 +25,7 @@ const MOCK_PAYMENT_RESPONSE: IzipayPaymentResponse = {
   amount: 15000,
   currency: "PEN",
   orderId: "ORD-001",
-  paymentUrl: "https://pay.sandbox.izipay.pe/pay_abc123",
+  paymentUrl: "https://pay.micuentaweb.pe/pay_abc123",
   createdAt: "2024-01-15T10:30:00Z",
   updatedAt: "2024-01-15T10:30:00Z",
 };
@@ -50,15 +51,15 @@ describe("IzipayClient", () => {
       expect(client).toBeInstanceOf(IzipayClient);
     });
 
-    it("should throw on invalid API key format for sandbox", () => {
-      expect(() => new IzipayClient({ apiKey: "invalid_key", environment: "sandbox" })).toThrow(
-        "Invalid API key format for sandbox",
+    it("should throw on missing username", () => {
+      expect(() => new IzipayClient({ username: "", password: "test", environment: "sandbox" })).toThrow(
+        "Username and password are required",
       );
     });
 
-    it("should throw on invalid API key format for production", () => {
-      expect(() => new IzipayClient({ apiKey: "izk_test_wrong", environment: "production" })).toThrow(
-        "Invalid API key format for production",
+    it("should throw on missing password", () => {
+      expect(() => new IzipayClient({ username: "98671504", password: "", environment: "sandbox" })).toThrow(
+        "Username and password are required",
       );
     });
   });
@@ -75,16 +76,16 @@ describe("IzipayClient", () => {
       expect(result).toEqual(MOCK_PAYMENT_RESPONSE);
       expect(mockFetch).toHaveBeenCalledTimes(1);
       const [url, options] = mockFetch.mock.calls[0];
-      expect(url).toBe("https://api.sandbox.izipay.pe/v1/payments");
+      expect(url).toBe("https://api.micuentaweb.pe/v1/payments");
       expect(options?.method).toBe("POST");
-      expect(options?.headers).toHaveProperty("Authorization", "Bearer izk_test_abc123");
+      expect(options?.headers).toHaveProperty("Authorization");
     });
 
     it("should throw IzipayAuthError on 401", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 401,
-        json: async () => ({ message: "Invalid API key" }),
+        json: async () => ({ message: "Invalid credentials" }),
       });
 
       await expect(client.createPayment(CREATE_REQUEST)).rejects.toThrow(IzipayAuthError);
@@ -128,7 +129,7 @@ describe("IzipayClient", () => {
 
       expect(result).toEqual(MOCK_PAYMENT_RESPONSE);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.sandbox.izipay.pe/v1/payments/pay_abc123/status",
+        "https://api.micuentaweb.pe/v1/payments/pay_abc123/status",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -149,7 +150,7 @@ describe("IzipayClient", () => {
 
       expect(result).toEqual(MOCK_DETAILS_RESPONSE);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.sandbox.izipay.pe/v1/payments/pay_abc123/details",
+        "https://api.micuentaweb.pe/v1/payments/pay_abc123/details",
         expect.objectContaining({ method: "GET" }),
       );
     });

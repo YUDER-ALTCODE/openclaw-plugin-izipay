@@ -15,7 +15,7 @@ OpenClaw plugin for **Izipay** payment gateway integration. Provides agent tools
 | `izipay_payment_details` | Get full transaction details including fees, payment method, installments, refunds |
 
 - ✅ Sandbox & Production environments
-- ✅ Config via plugin config or `IZIPAY_API_KEY` env var
+- ✅ Config via plugin config or env vars (`IZIPAY_USERNAME`, `IZIPAY_PASSWORD`)
 - ✅ Type-safe with TypeBox schemas (runtime validation + metadata)
 - ✅ Proper error classes (Auth, Network, Validation, RateLimit)
 - ✅ Ready for [ClawHub Marketplace](https://clawhub.openclaw.ai)
@@ -52,7 +52,8 @@ pnpm run build
       "izipay": {
         "enabled": true,
         "config": {
-          "apiKey": "izk_test_abc123...",
+          "username": "98671504",
+          "password": "testpassword_abc123...",
           "environment": "sandbox"
         }
       }
@@ -61,24 +62,22 @@ pnpm run build
 }
 ```
 
-### Option 2: Environment Variable
+### Option 2: Environment Variables
 
 ```bash
 # .env
-IZIPAY_API_KEY=izk_test_abc123...
+IZIPAY_USERNAME=98671504
+IZIPAY_PASSWORD=testpassword_abc123...
 IZIPAY_ENVIRONMENT=sandbox
 ```
 
-> **Note**: Plugin config takes precedence over env var.
+> **Note**: Plugin config takes precedence over env vars.
 
-### API Key Format
+### Where to Find Your Credentials
 
-| Environment | Prefix |
-|-------------|--------|
-| Sandbox | `izk_test_` or `tsk_test_` |
-| Production | `izk_live_` or `tsk_live_` |
-
-Get keys from [Izipay Dashboard](https://dashboard.izipay.pe).
+1. Login to [Izipay Dashboard](https://dashboard.izipay.pe)
+2. Go to **Configuración** → **API Keys**
+3. Copy your **Usuario** (username) and **Contraseña de test** (sandbox password)
 
 ## Usage
 
@@ -103,7 +102,7 @@ await tools.izipay_create_payment({
 {
   paymentId: "pay_abc123",
   status: "pending",
-  paymentUrl: "https://pay.sandbox.izipay.pe/pay_abc123",
+  paymentUrl: "https://pay.micuentaweb.pe/pay_abc123",
   amount: 15000,
   currency: "PEN",
   orderId: "ORD-2024-001",
@@ -170,7 +169,7 @@ try {
   await tools.izipay_create_payment({ ... });
 } catch (err) {
   if (err instanceof IzipayAuthError) {
-    // 401 - Invalid API key
+    // 401 - Invalid credentials
   } else if (err instanceof IzipayRateLimitError) {
     // 429 - Retry after err.retryAfter ms
   } else if (err instanceof IzipayValidationError) {

@@ -9,7 +9,8 @@ import type { IzipayPaymentResponse, IzipayPaymentDetails } from "../types/api.j
 vi.mock("../client/izipay-client.js");
 
 const MOCK_CONFIG = {
-  apiKey: "izk_test_abc123",
+  username: "98671504",
+  password: "testpassword_abc123",
   environment: "sandbox" as const,
 };
 
@@ -26,7 +27,7 @@ const MOCK_PAYMENT_RESPONSE: IzipayPaymentResponse = {
   amount: 15000,
   currency: "PEN",
   orderId: "ORD-001",
-  paymentUrl: "https://pay.sandbox.izipay.pe/pay_abc123",
+  paymentUrl: "https://pay.micuentaweb.pe/pay_abc123",
   createdAt: "2024-01-15T10:30:00Z",
   updatedAt: "2024-01-15T10:30:00Z",
 };
@@ -110,14 +111,14 @@ describe("Tools", () => {
       expect(result.currency).toBe("USD");
     });
 
-    it("should throw on missing API key", async () => {
+    it("should throw on missing credentials", async () => {
       await expect(
         createPaymentTool(
           { amount: 10000, currency: "PEN", orderId: "ORD-001" },
-          { apiKey: "", environment: "sandbox" },
+          { username: "", password: "", environment: "sandbox" },
           MOCK_CONTEXT,
         ),
-      ).rejects.toThrow("Izipay API key not configured");
+      ).rejects.toThrow("Izipay credentials not configured");
     });
 
     it("should respect abort signal", async () => {

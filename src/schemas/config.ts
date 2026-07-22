@@ -1,7 +1,8 @@
 import { Type, type Static } from "typebox";
 
 export const IzipayPluginConfigSchema = Type.Object({
-  apiKey: Type.Optional(Type.String({ minLength: 1 })),
+  username: Type.Optional(Type.String({ minLength: 1, description: "Izipay username (user ID)" })),
+  password: Type.Optional(Type.String({ minLength: 1, description: "Izipay password (test or production)" })),
   environment: Type.Optional(
     Type.Union([Type.Literal("sandbox"), Type.Literal("production")])
   ),
@@ -13,15 +14,10 @@ export const DEFAULT_CONFIG: IzipayPluginConfig = {
   environment: "sandbox",
 };
 
-export function getApiKey(config: IzipayPluginConfig | undefined): string | undefined {
-  if (!config) return undefined;
-  if (config.apiKey) return config.apiKey;
-  return process.env.IZIPAY_API_KEY;
-}
-
 export function resolveConfig(config: IzipayPluginConfig | undefined): Required<IzipayPluginConfig> {
   return {
-    apiKey: config?.apiKey ?? process.env.IZIPAY_API_KEY ?? "",
+    username: config?.username ?? process.env.IZIPAY_USERNAME ?? "",
+    password: config?.password ?? process.env.IZIPAY_PASSWORD ?? "",
     environment: config?.environment ?? "sandbox",
   };
 }

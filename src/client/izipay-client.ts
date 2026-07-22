@@ -4,23 +4,21 @@ import { IZIPAY_ENDPOINTS } from "./endpoints.js";
 import { IzipayApiError, IzipayAuthError, IzipayNetworkError } from "./errors.js";
 
 export interface IzipayClientConfig {
-  apiKey: string;
+  username: string;
+  password: string;
   environment: "sandbox" | "production";
 }
 
 export class IzipayClient {
   private readonly baseUrl: string;
-  private readonly apiKey: string;
+  private readonly config: IzipayClientConfig;
 
   constructor(config: IzipayClientConfig) {
-    this.apiKey = config.apiKey;
+    this.config = config;
     this.baseUrl = getBaseUrl(config.environment);
 
-    if (config.environment === "sandbox" && !/^(izk_test_|tsk_test_)/.test(config.apiKey)) {
-      throw new Error("Invalid API key format for sandbox");
-    }
-    if (config.environment === "production" && !/^(izk_live_|tsk_live_)/.test(config.apiKey)) {
-      throw new Error("Invalid API key format for production");
+    if (!config.username || !config.password) {
+      throw new Error("Username and password are required");
     }
   }
 
@@ -31,7 +29,7 @@ export class IzipayClient {
       ...options,
       method: options.method ?? "GET",
       headers: {
-        ...createAuthHeaders({ apiKey: this.apiKey, environment: "sandbox" }),
+        ...createAuthHeaders(this.config),
         ...options.headers,
       },
     });
@@ -40,7 +38,7 @@ export class IzipayClient {
 
     if (!response.ok) {
       if (response.status === 401) {
-        throw new IzipayAuthError("Invalid API key", response.status, responseData);
+        throw new IzipayAuthError("Invalid credentials", response.status, responseData);
       }
       if (response.status >= 500) {
         throw new IzipayNetworkError("Izipay server error", response.status, responseData);

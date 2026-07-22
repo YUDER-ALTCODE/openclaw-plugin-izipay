@@ -10,17 +10,23 @@
     "providers": [
       {
         "id": "izipay",
-        "envVars": ["IZIPAY_API_KEY"],
-        "configFields": ["apiKey", "environment"]
+        "envVars": ["IZIPAY_USERNAME", "IZIPAY_PASSWORD"],
+        "configFields": ["username", "password", "environment"]
       }
     ]
   },
   "uiHints": {
-    "apiKey": {
-      "label": "Izipay API Key",
-      "help": "Izipay API key (fallback: IZIPAY_API_KEY env var). Format: izk_live_... or izk_test_...",
+    "username": {
+      "label": "Izipay Username",
+      "help": "Izipay user ID (fallback: IZIPAY_USERNAME env var). Found in dashboard under Configuración → API Keys",
+      "sensitive": false,
+      "placeholder": "98671504"
+    },
+    "password": {
+      "label": "Izipay Password",
+      "help": "Izipay password (fallback: IZIPAY_PASSWORD env var). Use test password for sandbox, production password for live",
       "sensitive": true,
-      "placeholder": "izk_test_..."
+      "placeholder": "testpassword_..."
     },
     "environment": {
       "label": "Environment",
@@ -42,9 +48,13 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
-      "apiKey": {
-        "type": ["string", "object"],
-        "description": "Izipay API key"
+      "username": {
+        "type": "string",
+        "description": "Izipay user ID"
+      },
+      "password": {
+        "type": "string",
+        "description": "Izipay password (test or production)"
       },
       "environment": {
         "type": "string",
@@ -52,6 +62,6 @@
         "default": "sandbox"
       }
     },
-    "required": ["apiKey"]
+    "required": ["username", "password"]
   }
 }

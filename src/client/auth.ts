@@ -1,22 +1,20 @@
 export interface IzipayClientConfig {
-  apiKey: string;
+  username: string;
+  password: string;
   environment: "sandbox" | "production";
 }
 
 export function createAuthHeaders(config: IzipayClientConfig): Record<string, string> {
+  const credentials = Buffer.from(`${config.username}:${config.password}`).toString("base64");
   return {
-    Authorization: `Bearer ${config.apiKey}`,
+    Authorization: `Basic ${credentials}`,
     "Content-Type": "application/json",
     Accept: "application/json",
   };
 }
 
 export function getBaseUrl(environment: "sandbox" | "production"): string {
-  const urls = {
-    sandbox: "https://api.sandbox.izipay.pe",
-    production: "https://api.izipay.pe",
-  };
-  return urls[environment];
+  return "https://api.micuentaweb.pe";
 }
 
 export function buildUrl(baseUrl: string, path: string): string {
