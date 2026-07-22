@@ -1,0 +1,29 @@
+---
+name: Feature Request
+about: Suggest a new feature for the plugin
+title: "[Feature] "
+labels: ["enhancement"]
+assignees: ""
+---
+
+## ¿Es tu solicitud relacionada con un problema?
+
+Descripción clara del problema. ej. "Siempre me frustra cuando..."
+
+## Solución Propuesta
+
+Descripción clara de lo que quieres que pase.
+
+## Alternativas Consideradas
+
+Descripción de alternativas que hayas considerado.
+
+## Contexto Adicional
+
+Cualquier otro contexto, capturas de pantalla, referencias a API de Izipay, etc.
+
+## Checklist
+
+- [ ] He revisado que no exista ya un issue similar
+- [ ] Esta feature encaja en el scope del plugin (MVP: create/status/details)
+- [ ] Estoy dispuesto a ayudar con la implementación

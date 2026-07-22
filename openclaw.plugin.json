@@ -1,0 +1,57 @@
+{
+  "id": "izipay",
+  "name": "Izipay Payments",
+  "description": "Integrate Izipay payment gateway for creating payments, checking status, and retrieving transaction details",
+  "kind": "tool",
+  "activation": {
+    "onStartup": true
+  },
+  "setup": {
+    "providers": [
+      {
+        "id": "izipay",
+        "envVars": ["IZIPAY_API_KEY"],
+        "configFields": ["apiKey", "environment"]
+      }
+    ]
+  },
+  "uiHints": {
+    "apiKey": {
+      "label": "Izipay API Key",
+      "help": "Izipay API key (fallback: IZIPAY_API_KEY env var). Format: izk_live_... or izk_test_...",
+      "sensitive": true,
+      "placeholder": "izk_test_..."
+    },
+    "environment": {
+      "label": "Environment",
+      "help": "Izipay environment to use",
+      "options": [
+        { "value": "sandbox", "label": "Sandbox (testing)" },
+        { "value": "production", "label": "Production (live)" }
+      ]
+    }
+  },
+  "contracts": {
+    "tools": [
+      "izipay_create_payment",
+      "izipay_payment_status",
+      "izipay_payment_details"
+    ]
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "apiKey": {
+        "type": ["string", "object"],
+        "description": "Izipay API key"
+      },
+      "environment": {
+        "type": "string",
+        "enum": ["sandbox", "production"],
+        "default": "sandbox"
+      }
+    },
+    "required": ["apiKey"]
+  }
+}

@@ -1,0 +1,43 @@
+---
+name: Bug Report
+about: Report a bug in the plugin
+title: "[Bug] "
+labels: ["bug"]
+assignees: ""
+---
+
+## Descripción del Bug
+
+Descripción clara y concisa del problema.
+
+## Pasos para Reproducir
+
+1. Ve a '...'
+2. Ejecuta '...'
+3. Observa el error '...'
+
+## Comportamiento Esperado
+
+Qué esperabas que pasara.
+
+## Comportamiento Actual
+
+Qué pasó realmente (incluye logs, capturas de pantalla si aplica).
+
+## Entorno
+
+- **Versión del plugin**: ej. 0.1.0
+- **Versión de OpenClaw**: ej. 2026.7.0
+- **Entorno Izipay**: sandbox / production
+- **Node.js**: ej. 22.22.3
+- **OS**: Linux / macOS / Windows
+
+## Logs / Error
+
+```
+Pega aquí los logs relevantes (SIN credenciales)
+```
+
+## Contexto Adicional
+
+Cualquier otra información que ayude a resolver el issue.

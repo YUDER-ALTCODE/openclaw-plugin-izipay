@@ -1,0 +1,26 @@
+---
+name: Question
+about: Ask a question about the plugin
+title: "[Question] "
+labels: ["question"]
+assignees: ""
+---
+
+## Tu Pregunta
+
+Describe tu pregunta claramente.
+
+## Contexto
+
+- **Versión del plugin**:
+- **Versión de OpenClaw**:
+- **Entorno**: sandbox / production
+- **Qué intentas lograr**:
+
+## Lo que has intentado
+
+Describe lo que ya probaste.
+
+## Información Adicional
+
+Cualquier otra cosa que pueda ayudar.
