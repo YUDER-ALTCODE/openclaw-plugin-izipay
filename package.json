@@ -68,8 +68,8 @@
       "pluginSdkVersion": "2026.7.0"
     },
     "install": {
-      "clawhubSpec": "clawhub:openclaw-plugin-izipay",
-      "npmSpec": "openclaw-plugin-izipay",
+      "clawhubSpec": "clawhub:@YUDER-ALTCODE/openclaw-plugin-izipay",
+      "npmSpec": "@YUDER-ALTCODE/openclaw-plugin-izipay",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.7.0"
     },
