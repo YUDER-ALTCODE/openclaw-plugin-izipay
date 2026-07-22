@@ -5,6 +5,10 @@ node_modules/
 # Build output
 dist/
 build/
+src/**/*.js
+src/**/*.d.ts
+src/**/*.js.map
+src/**/*.d.ts.map
 *.tsbuildinfo
 
 # Environment
