@@ -1,6 +1,6 @@
 {
   "name": "@YUDER-ALTCODE/openclaw-plugin-izipay",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "OpenClaw plugin for Izipay payment gateway integration",
   "type": "module",
   "main": "./dist/index.js",
@@ -11,7 +11,7 @@
       "types": "./dist/index.d.ts"
     }
   },
-"files": [
+  "files": [
     "dist",
     "README.md",
     "LICENSE",
