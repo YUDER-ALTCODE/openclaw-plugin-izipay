@@ -10,8 +10,15 @@
     "providers": [
       {
         "id": "izipay",
-        "envVars": ["IZIPAY_USERNAME", "IZIPAY_PASSWORD"],
-        "configFields": ["username", "password", "environment"]
+        "envVars": [
+          "IZIPAY_USERNAME",
+          "IZIPAY_PASSWORD"
+        ],
+        "configFields": [
+          "username",
+          "password",
+          "environment"
+        ]
       }
     ]
   },
@@ -32,36 +39,51 @@
       "label": "Environment",
       "help": "Izipay environment to use",
       "options": [
-        { "value": "sandbox", "label": "Sandbox (testing)" },
-        { "value": "production", "label": "Production (live)" }
+        {
+          "value": "sandbox",
+          "label": "Sandbox (testing)"
+        },
+        {
+          "value": "production",
+          "label": "Production (live)"
+        }
       ]
     }
   },
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "username": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Izipay username (user ID)"
+      },
+      "password": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Izipay password (test or production)"
+      },
+      "environment": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "sandbox"
+          },
+          {
+            "type": "string",
+            "const": "production"
+          }
+        ]
+      }
+    },
+    "additionalProperties": false
+  },
+  "version": "0.1.1",
   "contracts": {
     "tools": [
       "izipay_create_payment",
       "izipay_payment_status",
       "izipay_payment_details"
     ]
-  },
-  "configSchema": {
-    "type": "object",
-    "additionalProperties": false,
-    "properties": {
-      "username": {
-        "type": "string",
-        "description": "Izipay user ID"
-      },
-      "password": {
-        "type": "string",
-        "description": "Izipay password (test or production)"
-      },
-      "environment": {
-        "type": "string",
-        "enum": ["sandbox", "production"],
-        "default": "sandbox"
-      }
-    },
-    "required": ["username", "password"]
   }
 }
