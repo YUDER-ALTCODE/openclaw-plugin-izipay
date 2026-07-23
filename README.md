@@ -208,10 +208,14 @@ pnpm version patch
 # Build + validate
 pnpm run build && pnpm run plugin:validate
 
-# Publish to npm
-npm publish
-
-# Git tag pushed automatically via postversion hook
+# Publish to ClawHub
+clawhub package publish . \
+  --version <version> \
+  --family code-plugin \
+  --source-repo YUDER-ALTCODE/openclaw-plugin-izipay \
+  --source-commit <commit-sha> \
+  --source-ref v<version> \
+  --tags latest
 ```
 
 ## Roadmap
