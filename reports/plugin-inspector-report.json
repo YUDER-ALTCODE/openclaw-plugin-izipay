@@ -1,0 +1,271 @@
+{
+  "generatedAt": "deterministic",
+  "targetOpenClaw": {
+    "configuredPath": null,
+    "status": "disabled",
+    "compatRecords": [],
+    "compatRecordStatuses": {},
+    "hookNames": [],
+    "apiRegistrars": [],
+    "capturedRegistrars": [],
+    "sdkExports": [],
+    "reservedSdkExports": [],
+    "supportedFacadeSdkExports": [],
+    "publicPluginOwnedSdkExports": [],
+    "manifestFields": [],
+    "manifestContractFields": []
+  },
+  "status": "pass",
+  "summary": {
+    "breakageCount": 0,
+    "warningCount": 0,
+    "deprecationWarningCount": 0,
+    "issueCount": 0
+  },
+  "fixtures": [
+    {
+      "id": "openclaw-plugin-izipay",
+      "name": "Izipay Payments",
+      "priority": "high",
+      "seams": [
+        "dynamic-tool"
+      ],
+      "why": "local OpenClaw plugin root",
+      "status": "ok",
+      "hooks": [],
+      "hookDetails": [],
+      "registrations": [],
+      "registrationDetails": [],
+      "manifestContracts": [
+        "tools"
+      ],
+      "manifestFiles": [
+        "openclaw.plugin.json"
+      ],
+      "sourceFiles": [
+        "index.ts",
+        "src/client/auth.ts",
+        "src/client/endpoints.ts",
+        "src/client/errors.ts",
+        "src/client/index.ts",
+        "src/client/izipay-client.ts",
+        "src/schemas/config.ts",
+        "src/schemas/index.ts",
+        "src/schemas/payment.ts",
+        "src/tools/create-payment.ts",
+        "src/tools/index.ts",
+        "src/tools/payment-details.ts",
+        "src/tools/payment-status.ts",
+        "src/types/api.ts",
+        "vitest.config.ts"
+      ],
+      "pluginManifests": [
+        {
+          "path": "openclaw.plugin.json",
+          "id": "izipay",
+          "name": "Izipay Payments",
+          "version": null,
+          "keys": [
+            "activation",
+            "configSchema",
+            "contracts",
+            "description",
+            "id",
+            "kind",
+            "name",
+            "setup",
+            "uiHints"
+          ],
+          "contracts": [
+            "tools"
+          ],
+          "providerAuthEnvVars": {},
+          "channelEnvVars": {},
+          "activation": {
+            "onStartup": true
+          }
+        }
+      ],
+      "securityManifests": [],
+      "package": {
+        "path": "package.json",
+        "name": "@YUDER-ALTCODE/openclaw-plugin-izipay",
+        "version": "0.1.0",
+        "type": "module",
+        "main": "./dist/index.js",
+        "npmPack": {
+          "advertised": true,
+          "private": false,
+          "filesMode": "implicit",
+          "files": [],
+          "invalidFileSpecs": []
+        },
+        "dependencies": [
+          "typebox",
+          "zod"
+        ],
+        "peerDependencies": [
+          "openclaw"
+        ],
+        "optionalDependencies": [],
+        "openclaw": {
+          "extensions": [
+            "./dist/index.js"
+          ],
+          "runtimeExtensions": [],
+          "setupEntry": null,
+          "compatPluginApi": ">=2026.7.0",
+          "buildOpenClawVersion": "2026.7.0",
+          "buildPluginSdkVersion": "2026.7.0",
+          "install": {
+            "clawhubSpec": "clawhub:@YUDER-ALTCODE/openclaw-plugin-izipay",
+            "npmSpec": "@YUDER-ALTCODE/openclaw-plugin-izipay",
+            "defaultChoice": "npm",
+            "minHostVersion": ">=2026.7.0"
+          },
+          "release": {
+            "publishToClawHub": true,
+            "publishToNpm": true
+          },
+          "unsupportedMetadata": [],
+          "entrypoints": [
+            {
+              "kind": "extension",
+              "specifier": "./dist/index.js",
+              "relativePath": "dist/index.js",
+              "exists": false,
+              "requiresBuild": true
+            }
+          ]
+        }
+      },
+      "packages": [
+        {
+          "path": "package.json",
+          "name": "@YUDER-ALTCODE/openclaw-plugin-izipay",
+          "version": "0.1.0",
+          "type": "module",
+          "main": "./dist/index.js",
+          "npmPack": {
+            "advertised": true,
+            "private": false,
+            "filesMode": "implicit",
+            "files": [],
+            "invalidFileSpecs": []
+          },
+          "dependencies": [
+            "typebox",
+            "zod"
+          ],
+          "peerDependencies": [
+            "openclaw"
+          ],
+          "optionalDependencies": [],
+          "openclaw": {
+            "extensions": [
+              "./dist/index.js"
+            ],
+            "runtimeExtensions": [],
+            "setupEntry": null,
+            "compatPluginApi": ">=2026.7.0",
+            "buildOpenClawVersion": "2026.7.0",
+            "buildPluginSdkVersion": "2026.7.0",
+            "install": {
+              "clawhubSpec": "clawhub:@YUDER-ALTCODE/openclaw-plugin-izipay",
+              "npmSpec": "@YUDER-ALTCODE/openclaw-plugin-izipay",
+              "defaultChoice": "npm",
+              "minHostVersion": ">=2026.7.0"
+            },
+            "release": {
+              "publishToClawHub": true,
+              "publishToNpm": true
+            },
+            "unsupportedMetadata": [],
+            "entrypoints": [
+              {
+                "kind": "extension",
+                "specifier": "./dist/index.js",
+                "relativePath": "dist/index.js",
+                "exists": false,
+                "requiresBuild": true
+              }
+            ]
+          }
+        }
+      ],
+      "sdkImports": [
+        "openclaw/plugin-sdk/tool-plugin"
+      ],
+      "sdkImportDetails": [
+        {
+          "specifier": "openclaw/plugin-sdk/tool-plugin",
+          "file": "index.ts",
+          "line": 2,
+          "ref": "index.ts:2"
+        },
+        {
+          "specifier": "openclaw/plugin-sdk/tool-plugin",
+          "file": "src/tools/create-payment.ts",
+          "line": 5,
+          "ref": "src/tools/create-payment.ts:5"
+        },
+        {
+          "specifier": "openclaw/plugin-sdk/tool-plugin",
+          "file": "src/tools/payment-details.ts",
+          "line": 4,
+          "ref": "src/tools/payment-details.ts:4"
+        },
+        {
+          "specifier": "openclaw/plugin-sdk/tool-plugin",
+          "file": "src/tools/payment-status.ts",
+          "line": 4,
+          "ref": "src/tools/payment-status.ts:4"
+        }
+      ],
+      "sdkDeprecations": []
+    }
+  ],
+  "issues": [],
+  "contractProbes": [],
+  "logs": [
+    {
+      "fixture": "openclaw-plugin-izipay",
+      "code": "seam-inventory",
+      "level": "log",
+      "message": "observed 0 hooks, 0 registrations, and 1 manifest contracts",
+      "evidence": [
+        "manifestContract:tools"
+      ]
+    },
+    {
+      "fixture": "openclaw-plugin-izipay",
+      "code": "package-metadata",
+      "level": "log",
+      "message": "selected package metadata for plugin contract checks",
+      "evidence": [
+        "package.json",
+        "@YUDER-ALTCODE/openclaw-plugin-izipay",
+        "version:0.1.0"
+      ]
+    },
+    {
+      "fixture": "openclaw-plugin-izipay",
+      "code": "declarative-contracts",
+      "level": "log",
+      "message": "fixture declares manifest contracts that can be checked without executing plugin code",
+      "evidence": [
+        "tools"
+      ]
+    },
+    {
+      "fixture": "openclaw",
+      "code": "target-openclaw-unavailable",
+      "level": "log",
+      "message": "target OpenClaw checkout was not available, so compat record coverage was not checked",
+      "evidence": [
+        "not configured"
+      ]
+    }
+  ],
+  "decisions": []
+}

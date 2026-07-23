@@ -11,6 +11,12 @@
       "types": "./dist/index.d.ts"
     }
   },
+"files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "openclaw.plugin.json"
+  ],
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
