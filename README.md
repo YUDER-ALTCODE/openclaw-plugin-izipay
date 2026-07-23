@@ -1,8 +1,8 @@
 # openclaw-plugin-izipay
 
-[![npm version](https://img.shields.io/npm/v/openclaw-plugin-izipay)](https://www.npmjs.com/package/openclaw-plugin-izipay)
-[![license](https://img.shields.io/npm/l/openclaw-plugin-izipay)](LICENSE)
-[![Node](https://img.shields.io/node/v/openclaw-plugin-izipay)](https://nodejs.org)
+[![npm version](https://img.shields.io/npm/v/@YUDER-ALTCODE/openclaw-plugin-izipay)](https://www.npmjs.com/package/@YUDER-ALTCODE/openclaw-plugin-izipay)
+[![license](https://img.shields.io/npm/l/@YUDER-ALTCODE/openclaw-plugin-izipay)](LICENSE)
+[![ClawHub](https://img.shields.io/badge/ClawHub-published-brightgreen)](https://clawhub.openclaw.ai/packages/@YUDER-ALTCODE/openclaw-plugin-izipay)
 
 OpenClaw plugin for **Izipay** payment gateway integration. Provides agent tools to create payments, check status, and retrieve transaction details.
 
@@ -26,10 +26,10 @@ OpenClaw plugin for **Izipay** payment gateway integration. Provides agent tools
 
 ```bash
 # From npm
-openclaw plugins install npm:openclaw-plugin-izipay
+openclaw plugins install npm:@YUDER-ALTCODE/openclaw-plugin-izipay
 
 # From ClawHub
-openclaw plugins install clawhub:openclaw-plugin-izipay
+openclaw plugins install clawhub:@YUDER-ALTCODE/openclaw-plugin-izipay
 ```
 
 ### Manual (development)
