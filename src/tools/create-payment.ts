@@ -8,22 +8,16 @@ const CreatePaymentParamsSchema = Type.Object({
   amount: Type.Number({ minimum: 1, description: "Amount in cents (e.g., 10000 = 100.00)" }),
   currency: Type.Union([Type.Literal("PEN"), Type.Literal("USD")]),
   orderId: Type.String({ minLength: 1, maxLength: 64, description: "Unique order identifier for your store" }),
-  description: Type.Optional(Type.String({ maxLength: 255 })),
   customerEmail: Type.Optional(Type.String({ format: "email" })),
-  customerPhone: Type.Optional(Type.String({ pattern: "^\\+?[1-9]\\d{1,14}$" })),
-  returnUrl: Type.Optional(Type.String({ format: "uri" })),
-  cancelUrl: Type.Optional(Type.String({ format: "uri" })),
-  metadata: Type.Optional(Type.Record(Type.String(), Type.String())),
+  customerFirstName: Type.Optional(Type.String()),
+  customerLastName: Type.Optional(Type.String()),
+  customerPhone: Type.Optional(Type.String()),
 }, { additionalProperties: false });
 
 const CreatePaymentResultSchema = Type.Object({
-  paymentId: Type.String(),
   status: Type.String(),
-  paymentUrl: Type.Optional(Type.String({ format: "uri" })),
-  amount: Type.Number(),
-  currency: Type.String(),
-  orderId: Type.String(),
-  createdAt: Type.String(),
+  formToken: Type.Optional(Type.String()),
+  message: Type.Optional(Type.String()),
 });
 
 export async function createPaymentTool(
@@ -49,31 +43,33 @@ export async function createPaymentTool(
     amount: params.amount,
     currency: params.currency,
     orderId: params.orderId,
-    description: params.description,
-    customerEmail: params.customerEmail,
-    customerPhone: params.customerPhone,
-    returnUrl: params.returnUrl,
-    cancelUrl: params.cancelUrl,
-    metadata: params.metadata,
+    customer: {
+      email: params.customerEmail,
+      billingDetails: {
+        firstName: params.customerFirstName,
+        lastName: params.customerLastName,
+        phoneNumber: params.customerPhone,
+      },
+    },
   };
 
   const response = await client.createPayment(request);
 
+  if (response.status !== "SUCCESS") {
+    throw new Error(`Payment creation failed: ${response.message ?? "Unknown error"}`);
+  }
+
   return {
-    paymentId: response.paymentId,
     status: response.status,
-    paymentUrl: response.paymentUrl,
-    amount: response.amount,
-    currency: response.currency,
-    orderId: response.orderId,
-    createdAt: response.createdAt,
+    formToken: response.answer?.formToken,
+    message: response.message,
   };
 }
 
 export const createPaymentToolDefinition = {
   name: "izipay_create_payment",
   label: "Create Izipay Payment",
-  description: "Create a new payment request in Izipay. Returns payment ID and payment URL for customer redirection.",
+  description: "Create a new payment request in Izipay. Returns a formToken to use with the Izipay JavaScript SDK.",
   parameters: CreatePaymentParamsSchema,
   execute: createPaymentTool,
 };

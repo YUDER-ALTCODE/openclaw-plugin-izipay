@@ -81,9 +81,7 @@
   "version": "0.1.3",
   "contracts": {
     "tools": [
-      "izipay_create_payment",
-      "izipay_payment_status",
-      "izipay_payment_details"
+      "izipay_create_payment"
     ]
   }
 }

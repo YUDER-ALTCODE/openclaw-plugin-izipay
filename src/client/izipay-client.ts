@@ -1,4 +1,4 @@
-import type { IzipayCreatePaymentRequest, IzipayPaymentResponse, IzipayPaymentDetails } from "../types/api.js";
+import type { IzipayCreatePaymentRequest, IzipayCreatePaymentResponse } from "../types/api.js";
 import { createAuthHeaders, getBaseUrl, buildUrl } from "./auth.js";
 import { IZIPAY_ENDPOINTS } from "./endpoints.js";
 import { IzipayApiError, IzipayAuthError, IzipayNetworkError } from "./errors.js";
@@ -50,19 +50,11 @@ export class IzipayClient {
     return responseData as T;
   }
 
-  async createPayment(data: IzipayCreatePaymentRequest): Promise<IzipayPaymentResponse> {
-    return this.request<IzipayPaymentResponse>(IZIPAY_ENDPOINTS.payments, {
+  async createPayment(data: IzipayCreatePaymentRequest): Promise<IzipayCreatePaymentResponse> {
+    return this.request<IzipayCreatePaymentResponse>(IZIPAY_ENDPOINTS.createPayment, {
       method: "POST",
       body: JSON.stringify(data),
     });
-  }
-
-  async getPaymentStatus(paymentId: string): Promise<IzipayPaymentResponse> {
-    return this.request<IzipayPaymentResponse>(IZIPAY_ENDPOINTS.paymentStatus(paymentId));
-  }
-
-  async getPaymentDetails(paymentId: string): Promise<IzipayPaymentDetails> {
-    return this.request<IzipayPaymentDetails>(IZIPAY_ENDPOINTS.paymentDetails(paymentId));
   }
 }
 

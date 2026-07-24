@@ -22,15 +22,3 @@ export class IzipayNetworkError extends IzipayApiError {
     this.name = "IzipayNetworkError";
   }
 }
-
-export class IzipayValidationError extends IzipayApiError {
-  constructor(
-    message: string,
-    public readonly validationErrors: Array<{ field: string; message: string }>,
-    statusCode: number = 400,
-    responseData: unknown,
-  ) {
-    super(message, statusCode, responseData);
-    this.name = "IzipayValidationError";
-  }
-}

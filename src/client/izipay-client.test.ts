@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { IzipayClient } from "./izipay-client.js";
-import type { IzipayCreatePaymentRequest, IzipayPaymentResponse, IzipayPaymentDetails } from "../types/api.js";
+import type { IzipayCreatePaymentRequest, IzipayCreatePaymentResponse } from "../types/api.js";
 import { IzipayAuthError, IzipayNetworkError, IzipayApiError } from "./errors.js";
 
 const mockFetch = vi.fn();
@@ -13,29 +13,24 @@ const VALID_CONFIG = {
 };
 
 const CREATE_REQUEST: IzipayCreatePaymentRequest = {
-  amount: 15000,
+  amount: 10000,
   currency: "PEN",
-  orderId: "ORD-001",
-  customerEmail: "test@example.com",
+  orderId: "TEST-001",
+  customer: {
+    email: "test@example.com",
+  },
 };
 
-const MOCK_PAYMENT_RESPONSE: IzipayPaymentResponse = {
-  paymentId: "pay_abc123",
-  status: "pending",
-  amount: 15000,
-  currency: "PEN",
-  orderId: "ORD-001",
-  paymentUrl: "https://pay.micuentaweb.pe/pay_abc123",
-  createdAt: "2024-01-15T10:30:00Z",
-  updatedAt: "2024-01-15T10:30:00Z",
+const MOCK_SUCCESS_RESPONSE: IzipayCreatePaymentResponse = {
+  status: "SUCCESS",
+  answer: {
+    formToken: "abc123def456",
+  },
 };
 
-const MOCK_DETAILS_RESPONSE: IzipayPaymentDetails = {
-  ...MOCK_PAYMENT_RESPONSE,
-  installments: 1,
-  paymentMethod: { type: "card", brand: "Visa", lastFour: "4242" },
-  fees: { total: 450, breakdown: [{ type: "processing", amount: 450 }] },
-  refunds: [],
+const MOCK_ERROR_RESPONSE: IzipayCreatePaymentResponse = {
+  status: "ERROR",
+  message: "Invalid amount",
 };
 
 describe("IzipayClient", () => {
@@ -68,15 +63,15 @@ describe("IzipayClient", () => {
     it("should create payment successfully", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => MOCK_PAYMENT_RESPONSE,
+        json: async () => MOCK_SUCCESS_RESPONSE,
       });
 
       const result = await client.createPayment(CREATE_REQUEST);
 
-      expect(result).toEqual(MOCK_PAYMENT_RESPONSE);
+      expect(result).toEqual(MOCK_SUCCESS_RESPONSE);
       expect(mockFetch).toHaveBeenCalledTimes(1);
       const [url, options] = mockFetch.mock.calls[0];
-      expect(url).toBe("https://api.micuentaweb.pe/v1/payments");
+      expect(url).toBe("https://api.micuentaweb.pe/api-payment/V4/Charge/CreatePayment");
       expect(options?.method).toBe("POST");
       expect(options?.headers).toHaveProperty("Authorization");
     });
@@ -115,44 +110,6 @@ describe("IzipayClient", () => {
       mockFetch.mockRejectedValueOnce(new Error("Network error"));
 
       await expect(client.createPayment(CREATE_REQUEST)).rejects.toThrow("Network error");
-    });
-  });
-
-  describe("getPaymentStatus", () => {
-    it("should get payment status successfully", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => MOCK_PAYMENT_RESPONSE,
-      });
-
-      const result = await client.getPaymentStatus("pay_abc123");
-
-      expect(result).toEqual(MOCK_PAYMENT_RESPONSE);
-      expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.micuentaweb.pe/v1/payments/pay_abc123/status",
-        expect.objectContaining({ method: "GET" }),
-      );
-    });
-
-    it("should throw on empty paymentId", async () => {
-      await expect(client.getPaymentStatus("")).rejects.toThrow();
-    });
-  });
-
-  describe("getPaymentDetails", () => {
-    it("should get payment details successfully", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => MOCK_DETAILS_RESPONSE,
-      });
-
-      const result = await client.getPaymentDetails("pay_abc123");
-
-      expect(result).toEqual(MOCK_DETAILS_RESPONSE);
-      expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.micuentaweb.pe/v1/payments/pay_abc123/details",
-        expect.objectContaining({ method: "GET" }),
-      );
     });
   });
 });

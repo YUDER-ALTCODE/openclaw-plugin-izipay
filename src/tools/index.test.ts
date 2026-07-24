@@ -1,10 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createPaymentTool } from "./create-payment.js";
-import { paymentStatusTool } from "./payment-status.js";
-import { paymentDetailsTool } from "./payment-details.js";
 import type { ToolPluginExecutionContext } from "openclaw/plugin-sdk/tool-plugin.js";
 import { IzipayClient } from "../client/izipay-client.js";
-import type { IzipayPaymentResponse, IzipayPaymentDetails } from "../types/api.js";
+import type { IzipayCreatePaymentResponse } from "../types/api.js";
 
 vi.mock("../client/izipay-client.js");
 
@@ -21,100 +19,81 @@ const MOCK_CONTEXT: ToolPluginExecutionContext = {
   onUpdate: vi.fn(),
 };
 
-const MOCK_PAYMENT_RESPONSE: IzipayPaymentResponse = {
-  paymentId: "pay_abc123",
-  status: "pending",
-  amount: 15000,
-  currency: "PEN",
-  orderId: "ORD-001",
-  paymentUrl: "https://pay.micuentaweb.pe/pay_abc123",
-  createdAt: "2024-01-15T10:30:00Z",
-  updatedAt: "2024-01-15T10:30:00Z",
-};
-
-const MOCK_DETAILS_RESPONSE: IzipayPaymentDetails = {
-  ...MOCK_PAYMENT_RESPONSE,
-  installments: 1,
-  paymentMethod: { type: "card", brand: "Visa", lastFour: "4242" },
-  fees: { total: 450, breakdown: [{ type: "processing", amount: 450 }] },
-  refunds: [],
+const MOCK_SUCCESS_RESPONSE: IzipayCreatePaymentResponse = {
+  status: "SUCCESS",
+  answer: {
+    formToken: "abc123def456",
+  },
 };
 
 describe("Tools", () => {
   let mockClient: {
     createPayment: ReturnType<typeof vi.fn>;
-    getPaymentStatus: ReturnType<typeof vi.fn>;
-    getPaymentDetails: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockClient = {
       createPayment: vi.fn(),
-      getPaymentStatus: vi.fn(),
-      getPaymentDetails: vi.fn(),
     };
     vi.mocked(IzipayClient).mockImplementation(() => mockClient as any);
   });
 
   describe("createPaymentTool", () => {
     it("should create payment with all params", async () => {
-      mockClient.createPayment.mockResolvedValueOnce(MOCK_PAYMENT_RESPONSE);
+      mockClient.createPayment.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
 
       const result = await createPaymentTool(
         {
-          amount: 15000,
+          amount: 10000,
           currency: "PEN",
-          orderId: "ORD-001",
-          description: "Test order",
+          orderId: "TEST-001",
           customerEmail: "test@example.com",
-          returnUrl: "https://example.com/success",
-          cancelUrl: "https://example.com/cancel",
+          customerFirstName: "Test",
+          customerLastName: "User",
+          customerPhone: "987654321",
         },
         MOCK_CONFIG,
         MOCK_CONTEXT,
       );
 
-      expect(result.paymentId).toBe("pay_abc123");
-      expect(result.paymentUrl).toContain("pay_abc123");
+      expect(result.status).toBe("SUCCESS");
+      expect(result.formToken).toBe("abc123def456");
       expect(mockClient.createPayment).toHaveBeenCalledWith({
-        amount: 15000,
+        amount: 10000,
         currency: "PEN",
-        orderId: "ORD-001",
-        description: "Test order",
-        customerEmail: "test@example.com",
-        returnUrl: "https://example.com/success",
-        cancelUrl: "https://example.com/cancel",
-        metadata: undefined,
+        orderId: "TEST-001",
+        customer: {
+          email: "test@example.com",
+          billingDetails: {
+            firstName: "Test",
+            lastName: "User",
+            phoneNumber: "987654321",
+          },
+        },
       });
     });
 
     it("should create payment with minimal params", async () => {
-      mockClient.createPayment.mockResolvedValueOnce({
-        ...MOCK_PAYMENT_RESPONSE,
-        amount: 10000,
-        currency: "USD",
-        orderId: "ORD-002",
-      });
+      mockClient.createPayment.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
 
       const result = await createPaymentTool(
         {
           amount: 10000,
           currency: "USD",
-          orderId: "ORD-002",
+          orderId: "TEST-002",
         },
         MOCK_CONFIG,
         MOCK_CONTEXT,
       );
 
-      expect(result.amount).toBe(10000);
-      expect(result.currency).toBe("USD");
+      expect(result.status).toBe("SUCCESS");
     });
 
     it("should throw on missing credentials", async () => {
       await expect(
         createPaymentTool(
-          { amount: 10000, currency: "PEN", orderId: "ORD-001" },
+          { amount: 10000, currency: "PEN", orderId: "TEST-001" },
           { username: "", password: "", environment: "sandbox" },
           MOCK_CONTEXT,
         ),
@@ -129,53 +108,26 @@ describe("Tools", () => {
 
       await expect(
         createPaymentTool(
-          { amount: 10000, currency: "PEN", orderId: "ORD-001" },
+          { amount: 10000, currency: "PEN", orderId: "TEST-001" },
           MOCK_CONFIG,
           abortedContext,
         ),
       ).rejects.toThrow("Aborted");
     });
-  });
 
-  describe("paymentStatusTool", () => {
-    it("should get payment status", async () => {
-      mockClient.getPaymentStatus.mockResolvedValueOnce({
-        ...MOCK_PAYMENT_RESPONSE,
-        status: "approved",
+    it("should throw on API error response", async () => {
+      mockClient.createPayment.mockResolvedValueOnce({
+        status: "ERROR",
+        message: "Invalid amount",
       });
 
-      const result = await paymentStatusTool(
-        { paymentId: "pay_abc123" },
-        MOCK_CONFIG,
-        MOCK_CONTEXT,
-      );
-
-      expect(result.paymentId).toBe("pay_abc123");
-      expect(result.status).toBe("approved");
-      expect(mockClient.getPaymentStatus).toHaveBeenCalledWith("pay_abc123");
-    });
-
-    it("should throw on empty paymentId", async () => {
       await expect(
-        paymentStatusTool({ paymentId: "" }, MOCK_CONFIG, MOCK_CONTEXT),
-      ).rejects.toThrow();
-    });
-  });
-
-  describe("paymentDetailsTool", () => {
-    it("should get payment details", async () => {
-      mockClient.getPaymentDetails.mockResolvedValueOnce(MOCK_DETAILS_RESPONSE);
-
-      const result = await paymentDetailsTool(
-        { paymentId: "pay_abc123" },
-        MOCK_CONFIG,
-        MOCK_CONTEXT,
-      );
-
-      expect(result.paymentId).toBe("pay_abc123");
-      expect(result.paymentMethod).toEqual({ type: "card", brand: "Visa", lastFour: "4242" });
-      expect(result.fees?.total).toBe(450);
-      expect(mockClient.getPaymentDetails).toHaveBeenCalledWith("pay_abc123");
+        createPaymentTool(
+          { amount: 10000, currency: "PEN", orderId: "TEST-001" },
+          MOCK_CONFIG,
+          MOCK_CONTEXT,
+        ),
+      ).rejects.toThrow("Payment creation failed: Invalid amount");
     });
   });
 });
