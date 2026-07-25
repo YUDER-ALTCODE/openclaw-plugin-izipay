@@ -29,6 +29,7 @@ export async function createPaymentTool(
 
   const username = config.username ?? process.env.IZIPAY_USERNAME;
   const password = config.password ?? process.env.IZIPAY_PASSWORD;
+  const publicKey = config.publicKey ?? process.env.IZIPAY_PUBLIC_KEY;
   if (!username || !password) {
     throw new Error("Izipay credentials not configured. Set username and password in plugin config or IZIPAY_USERNAME and IZIPAY_PASSWORD env vars.");
   }
@@ -36,6 +37,7 @@ export async function createPaymentTool(
   const client = new IzipayClient({
     username,
     password,
+    publicKey: publicKey || "",
     environment: config.environment ?? "sandbox",
   });
 

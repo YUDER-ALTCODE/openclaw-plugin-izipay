@@ -9,6 +9,7 @@ global.fetch = mockFetch;
 const VALID_CONFIG = {
   username: "98671504",
   password: "testpassword_abc123",
+  publicKey: "testpublickey_12345678901234567890",
   environment: "sandbox" as const,
 };
 

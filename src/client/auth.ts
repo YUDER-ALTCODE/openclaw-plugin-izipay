@@ -17,6 +17,12 @@ export function getBaseUrl(environment: "sandbox" | "production"): string {
   return "https://api.micuentaweb.pe";
 }
 
+export function getPaymentLinkBaseUrl(environment: "sandbox" | "production"): string {
+  return environment === "sandbox"
+    ? "https://sandbox-api-pw.izipay.pe"
+    : "https://api-pw.izipay.pe";
+}
+
 export function buildUrl(baseUrl: string, path: string): string {
   return `${baseUrl.replace(/\/$/, "")}${path.startsWith("/") ? "" : "/"}${path}`;
 }

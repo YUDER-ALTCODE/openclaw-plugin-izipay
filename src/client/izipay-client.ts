@@ -1,24 +1,37 @@
-import type { IzipayCreatePaymentRequest, IzipayCreatePaymentResponse } from "../types/api.js";
-import { createAuthHeaders, getBaseUrl, buildUrl } from "./auth.js";
-import { IZIPAY_ENDPOINTS } from "./endpoints.js";
+import type {
+  IzipayCreatePaymentRequest,
+  IzipayCreatePaymentResponse,
+  IzipayGenerateSessionTokenRequest,
+  IzipayGenerateSessionTokenResponse,
+  IzipayCreatePaymentLinkRequest,
+  IzipayCreatePaymentLinkResponse,
+} from "../types/api.js";
+import { createAuthHeaders, getBaseUrl, getPaymentLinkBaseUrl, buildUrl } from "./auth.js";
+import { IZIPAY_ENDPOINTS, IZIPAY_SESSION_ENDPOINTS, IZIPAY_PAYMENT_LINK_ENDPOINTS } from "./endpoints.js";
 import { IzipayApiError, IzipayAuthError, IzipayNetworkError } from "./errors.js";
 
 export interface IzipayClientConfig {
   username: string;
   password: string;
+  publicKey: string;
   environment: "sandbox" | "production";
 }
 
 export class IzipayClient {
   private readonly baseUrl: string;
+  private readonly paymentLinkBaseUrl: string;
   private readonly config: IzipayClientConfig;
 
   constructor(config: IzipayClientConfig) {
     this.config = config;
     this.baseUrl = getBaseUrl(config.environment);
+    this.paymentLinkBaseUrl = getPaymentLinkBaseUrl(config.environment);
 
     if (!config.username || !config.password) {
       throw new Error("Username and password are required");
+    }
+    if (!config.publicKey) {
+      throw new Error("Public key is required for payment link generation");
     }
   }
 
@@ -50,11 +63,107 @@ export class IzipayClient {
     return responseData as T;
   }
 
+  private async requestPaymentLink<T>(path: string, options: RequestInit = {}): Promise<T> {
+    const url = buildUrl(this.paymentLinkBaseUrl, path);
+
+    const response = await fetch(url, {
+      ...options,
+      method: options.method ?? "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...options.headers,
+      },
+    });
+
+    const responseData = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new IzipayAuthError("Invalid session token", response.status, responseData);
+      }
+      if (response.status >= 500) {
+        throw new IzipayNetworkError("Izipay payment link server error", response.status, responseData);
+      }
+      const message = (responseData as { message?: string })?.message ?? "Payment link API error";
+      throw new IzipayApiError(message, response.status, responseData);
+    }
+
+    return responseData as T;
+  }
+
   async createPayment(data: IzipayCreatePaymentRequest): Promise<IzipayCreatePaymentResponse> {
     return this.request<IzipayCreatePaymentResponse>(IZIPAY_ENDPOINTS.createPayment, {
       method: "POST",
       body: JSON.stringify(data),
     });
+  }
+
+  async generateSessionToken(transactionId: string, merchantCode: string, orderNumber: string, amount: string): Promise<string> {
+    const request: IzipayGenerateSessionTokenRequest = {
+      requestSource: "ECOMMERCE",
+      merchantCode,
+      orderNumber,
+      publicKey: this.config.publicKey,
+      amount,
+    };
+
+    const url = buildUrl(this.paymentLinkBaseUrl, IZIPAY_SESSION_ENDPOINTS.generateToken);
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        transactionId,
+      },
+      body: JSON.stringify(request),
+    });
+
+    const responseData = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new IzipayApiError(
+        `Session token generation failed: ${response.statusText}`,
+        response.status,
+        responseData,
+      );
+    }
+
+    const tokenResponse = responseData as IzipayGenerateSessionTokenResponse;
+    if (tokenResponse.code !== "00") {
+      throw new IzipayApiError(
+        `Session token generation failed: ${tokenResponse.message}`,
+        response.status,
+        responseData,
+      );
+    }
+
+    return tokenResponse.response.token;
+  }
+
+  async createPaymentLink(
+    data: IzipayCreatePaymentLinkRequest,
+    transactionId: string,
+  ): Promise<IzipayCreatePaymentLinkResponse> {
+    const orderNumber = data.referenceCode || `ORD${Date.now()}`;
+    const sessionToken = await this.generateSessionToken(
+      transactionId,
+      data.merchantCode,
+      orderNumber,
+      data.amount,
+    );
+
+    return this.requestPaymentLink<IzipayCreatePaymentLinkResponse>(
+      IZIPAY_PAYMENT_LINK_ENDPOINTS.generate,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+          transactionId,
+        },
+        body: JSON.stringify(data),
+      },
+    );
   }
 }
 
@@ -63,5 +172,5 @@ export function createIzipayClient(config: IzipayClientConfig): IzipayClient {
 }
 
 export { IzipayApiError, IzipayAuthError, IzipayNetworkError };
-export { IZIPAY_ENDPOINTS } from "./endpoints.js";
-export { createAuthHeaders, getBaseUrl, buildUrl } from "./auth.js";
+export { IZIPAY_ENDPOINTS, IZIPAY_SESSION_ENDPOINTS, IZIPAY_PAYMENT_LINK_ENDPOINTS } from "./endpoints.js";
+export { createAuthHeaders, getBaseUrl, getPaymentLinkBaseUrl, buildUrl } from "./auth.js";

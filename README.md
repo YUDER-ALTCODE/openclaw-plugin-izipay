@@ -4,20 +4,19 @@
 [![license](https://img.shields.io/npm/l/@YUDER-ALTCODE/openclaw-plugin-izipay)](LICENSE)
 [![ClawHub](https://img.shields.io/badge/ClawHub-published-brightgreen)](https://clawhub.openclaw.ai/packages/@YUDER-ALTCODE/openclaw-plugin-izipay)
 
-OpenClaw plugin for **Izipay** payment gateway integration. Provides agent tools to create payments, check status, and retrieve transaction details.
+OpenClaw plugin for **Izipay** payment gateway integration. Provides agent tools to create payments and payment links.
 
 ## Features
 
 | Tool | Description |
 |------|-------------|
-| `izipay_create_payment` | Create a new payment request, returns payment URL for customer redirect |
-| `izipay_payment_status` | Check current status of a payment by ID |
-| `izipay_payment_details` | Get full transaction details including fees, payment method, installments, refunds |
+| `izipay_create_payment` | Create a payment request, returns a formToken for the Izipay JavaScript SDK |
+| `izipay_create_payment_link` | Create a shareable payment link (WhatsApp, email, SMS, etc.) |
 
 - ✅ Sandbox & Production environments
-- ✅ Config via plugin config or env vars (`IZIPAY_USERNAME`, `IZIPAY_PASSWORD`)
+- ✅ Config via plugin config or env vars
 - ✅ Type-safe with TypeBox schemas (runtime validation + metadata)
-- ✅ Proper error classes (Auth, Network, Validation, RateLimit)
+- ✅ Proper error classes (Auth, Network, API)
 - ✅ Ready for [ClawHub Marketplace](https://clawhub.openclaw.ai)
 
 ## Installation
@@ -54,6 +53,7 @@ pnpm run build
         "config": {
           "username": "98671504",
           "password": "testpassword_abc123...",
+          "publicKey": "VErethUtraQuxas57wuMuquprADrAHAb",
           "environment": "sandbox"
         }
       }
@@ -68,6 +68,7 @@ pnpm run build
 # .env
 IZIPAY_USERNAME=98671504
 IZIPAY_PASSWORD=testpassword_abc123...
+IZIPAY_PUBLIC_KEY=VErethUtraQuxas57wuMuquprADrAHAb
 IZIPAY_ENVIRONMENT=sandbox
 ```
 
@@ -76,89 +77,94 @@ IZIPAY_ENVIRONMENT=sandbox
 ### Where to Find Your Credentials
 
 1. Login to [Izipay Dashboard](https://dashboard.izipay.pe)
-2. Go to **Configuración** → **API Keys**
-3. Copy your **Usuario** (username) and **Contraseña de test** (sandbox password)
+2. Go to **Recursos** → **Credenciales**
+3. Copy your:
+   - **Usuario** (username)
+   - **Contraseña de test** (sandbox password)
+   - **Clave API** for Payment Links (format: `XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`)
 
 ## Usage
 
 Once installed and configured, the tools are available to any OpenClaw agent:
 
-### Create Payment
+### Create Payment (Form Token)
 
 ```typescript
-// Agent calls this tool
+// Agent calls this tool to get a formToken for the Izipay JavaScript SDK
 await tools.izipay_create_payment({
-  amount: 15000,           // Amount in cents (150.00 PEN)
+  amount: 10000,           // Amount in cents (100.00 PEN)
   currency: "PEN",         // "PEN" or "USD"
-  orderId: "ORD-2024-001", // Your unique order ID
-  description: "Order #2024-001",
-  customerEmail: "cliente@ejemplo.com",
-  returnUrl: "https://tutienda.com/pago/exito",
-  cancelUrl: "https://tutienda.com/pago/cancelado",
-  metadata: { source: "web" }
+  orderId: "ORD-001",      // Your unique order ID
+  customerEmail: "cliente@ejemplo.com"
 });
 
 // Returns:
 {
-  paymentId: "pay_abc123",
-  status: "pending",
-  paymentUrl: "https://pay.micuentaweb.pe/pay_abc123",
-  amount: 15000,
-  currency: "PEN",
-  orderId: "ORD-2024-001",
-  createdAt: "2024-01-15T10:30:00Z"
+  status: "SUCCESS",
+  formToken: "eyJhbGciOiJIUzI1NiIs..."
 }
 ```
 
-### Check Payment Status
+### Create Payment Link
 
 ```typescript
-await tools.izipay_payment_status({ paymentId: "pay_abc123" });
+// Agent creates a shareable payment link
+await tools.izipay_create_payment_link({
+  merchantCode: "98671504",
+  productDescription: "Camiseta Premium",
+  amount: "10.50",
+  currency: "PEN",
+  expirationDate: "2026-12-31 23:59:00.000",
+  wayOfUse: "INDIVIDUAL",
+  payMethod: "CARD",
+  billing: {
+    firstName: "Juan",
+    lastName: "Pérez",
+    email: "juan@example.com",
+    phoneNumber: "999999999",
+    street: "Av. Principal 123",
+    postalCode: "15001",
+    city: "Lima",
+    state: "Lima",
+    country: "PE",
+    documentType: "DNI",
+    document: "12345678"
+  },
+  shipping: {
+    firstName: "Juan",
+    lastName: "Pérez",
+    email: "juan@example.com",
+    phoneNumber: "999999999",
+    street: "Av. Principal 123",
+    postalCode: "15001",
+    city: "Lima",
+    state: "Lima",
+    country: "PE",
+    documentType: "DNI",
+    document: "12345678"
+  }
+});
 
 // Returns:
 {
-  paymentId: "pay_abc123",
-  status: "approved",
-  amount: 15000,
+  status: "OK",
+  paymentLinkId: "1450558deaf948f2a46a37ddfcd85ea1",
+  paymentUrl: "https://paymentlink.izipay.pe/pay/2e3w70vcsoy",
+  amount: "10.50",
   currency: "PEN",
-  orderId: "ORD-2024-001",
-  updatedAt: "2024-01-15T10:32:15Z"
+  state: "1"  // 1=GENERADO, 3=TERMINADO_EXITO, etc.
 }
 ```
 
-### Get Full Details
+## Payment Link States
 
-```typescript
-await tools.izipay_payment_details({ paymentId: "pay_abc123" });
-
-// Returns:
-{
-  paymentId: "pay_abc123",
-  status: "approved",
-  amount: 15000,
-  currency: "PEN",
-  orderId: "ORD-2024-001",
-  installments: 1,
-  paymentMethod: { type: "card", brand: "Visa", lastFour: "4242" },
-  fees: { total: 450, breakdown: [{ type: "processing", amount: 450 }] },
-  refunds: [],
-  createdAt: "2024-01-15T10:30:00Z",
-  updatedAt: "2024-01-15T10:32:15Z"
-}
-```
-
-## Payment Status Values
-
-| Status | Description |
-|--------|-------------|
-| `pending` | Payment created, awaiting customer |
-| `processing` | Customer on payment page |
-| `approved` | Payment successful |
-| `declined` | Payment rejected |
-| `cancelled` | Customer cancelled |
-| `expired` | Payment link expired |
-| `refunded` | Fully refunded |
-| `partially_refunded` | Partial refund |
+| State | Description |
+|-------|-------------|
+| `1` | GENERADO - Link created and active |
+| `3` | TERMINADO_EXITO - Payment completed successfully |
+| `4` | TERMINADO_ERROR - Payment error |
+| `5` | EXPIRADO - Link expired |
+| `6` | DESACTIVADO - Link deactivated |
 
 ## Error Handling
 
@@ -166,16 +172,14 @@ Tools throw typed errors you can catch:
 
 ```typescript
 try {
-  await tools.izipay_create_payment({ ... });
+  await tools.izipay_create_payment_link({ ... });
 } catch (err) {
   if (err instanceof IzipayAuthError) {
-    // 401 - Invalid credentials
-  } else if (err instanceof IzipayRateLimitError) {
-    // 429 - Retry after err.retryAfter ms
-  } else if (err instanceof IzipayValidationError) {
-    // 400 - Check err.validationErrors
+    // 401 - Invalid credentials or session token
+  } else if (err instanceof IzipayApiError) {
+    // API error - check err.message for details
   } else if (err instanceof IzipayNetworkError) {
-    // 5xx or network failure
+    // Network failure or server error
   }
 }
 ```
@@ -186,29 +190,21 @@ try {
 # Install deps
 pnpm install
 
-# Type-check
-pnpm run typecheck
-
 # Run tests
 pnpm test
 
 # Build
 pnpm run build
-
-# Validate plugin manifest
-pnpm run plugin:validate
 ```
 
 ## Publishing
 
 ```bash
-# Version bump (patch/minor/major)
+# Version bump
 pnpm version patch
 
-# Build + validate
-pnpm run build && pnpm run plugin:validate
-
-# Publish to ClawHub
+# Build + publish to ClawHub
+pnpm run build
 clawhub package publish . \
   --version <version> \
   --family code-plugin \
@@ -217,14 +213,6 @@ clawhub package publish . \
   --source-ref v<version> \
   --tags latest
 ```
-
-## Roadmap
-
-- [ ] Webhook handling (`izipay_webhook_verify`)
-- [ ] Refund tool (`izipay_create_refund`)
-- [ ] Tokenization (`izipay_tokenize_card`)
-- [ ] Recurring payments (`izipay_create_subscription`)
-- [ ] Batch operations (`izipay_list_payments`)
 
 ## License
 
