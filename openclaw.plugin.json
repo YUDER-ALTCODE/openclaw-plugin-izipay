@@ -91,7 +91,7 @@
     },
     "additionalProperties": false
   },
-  "version": "0.2.0",
+  "version": "0.2.1",
 "contracts": {
     "tools": ["izipay_create_payment", "izipay_create_payment_link"]
   }
