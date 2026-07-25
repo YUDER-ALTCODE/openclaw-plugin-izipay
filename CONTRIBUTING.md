@@ -160,4 +160,4 @@ git push --follow-tags
 
 ## Questions?
 
-Open a [GitHub Issue](https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay/issues) or contact **yuderguerra503@gmail.com**.
+Open a [GitHub Issue](https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay/issues) or contact **yuderguerra508@gmail.com**.

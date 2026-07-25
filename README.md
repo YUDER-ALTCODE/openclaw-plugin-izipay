@@ -220,7 +220,7 @@ MIT © [Yuder Guerra](https://github.com/YUDER-ALTCODE)
 
 ## Support
 
-For questions or issues, open a [GitHub Issue](https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay/issues) or contact **yuderguerra503@gmail.com**.
+For questions or issues, open a [GitHub Issue](https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay/issues) or contact **yuderguerra508@gmail.com**.
 
 ## Related
 
