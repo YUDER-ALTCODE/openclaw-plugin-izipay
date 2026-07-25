@@ -51,9 +51,9 @@ pnpm run build
       "izipay": {
         "enabled": true,
         "config": {
-          "username": "98671504",
-          "password": "testpassword_abc123...",
-          "publicKey": "VErethUtraQuxas57wuMuquprADrAHAb",
+          "username": "YOUR_MERCHANT_CODE",
+          "password": "YOUR_SANDBOX_PASSWORD",
+          "publicKey": "YOUR_API_KEY",
           "environment": "sandbox"
         }
       }
@@ -66,9 +66,9 @@ pnpm run build
 
 ```bash
 # .env
-IZIPAY_USERNAME=98671504
-IZIPAY_PASSWORD=testpassword_abc123...
-IZIPAY_PUBLIC_KEY=VErethUtraQuxas57wuMuquprADrAHAb
+IZIPAY_USERNAME=YOUR_MERCHANT_CODE
+IZIPAY_PASSWORD=YOUR_SANDBOX_PASSWORD
+IZIPAY_PUBLIC_KEY=YOUR_API_KEY
 IZIPAY_ENVIRONMENT=sandbox
 ```
 
@@ -110,7 +110,7 @@ await tools.izipay_create_payment({
 ```typescript
 // Agent creates a shareable payment link
 await tools.izipay_create_payment_link({
-  merchantCode: "98671504",
+  merchantCode: "YOUR_MERCHANT_CODE",
   productDescription: "Camiseta Premium",
   amount: "10.50",
   currency: "PEN",
