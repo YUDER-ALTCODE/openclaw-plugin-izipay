@@ -1,37 +1,63 @@
-# openclaw-plugin-izipay
+<p align="center">
+  <img src="assets/favicon.png" alt="Izipay Logo" width="100">
+</p>
 
-[![npm version](https://img.shields.io/npm/v/@YUDER-ALTCODE/openclaw-plugin-izipay)](https://www.npmjs.com/package/@YUDER-ALTCODE/openclaw-plugin-izipay)
-[![license](https://img.shields.io/npm/l/@YUDER-ALTCODE/openclaw-plugin-izipay)](LICENSE)
-[![ClawHub](https://img.shields.io/badge/ClawHub-published-brightgreen)](https://clawhub.openclaw.ai/packages/@YUDER-ALTCODE/openclaw-plugin-izipay)
+<h1 align="center">openclaw-plugin-izipay</h1>
 
-OpenClaw plugin for **Izipay** payment gateway integration. Provides agent tools to create payments and payment links.
+<p align="center">
+  <strong>OpenClaw plugin for Izipay payment gateway integration</strong>
+</p>
 
-## Features
+<p align="center">
+  <a href="https://www.npmjs.com/package/@YUDER-ALTCODE/openclaw-plugin-izipay">
+    <img src="https://img.shields.io/npm/v/@YUDER-ALTCODE/openclaw-plugin-izipay?style=flat-square&color=blue" alt="npm version">
+  </a>
+  <a href="https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay/blob/main/LICENSE">
+    <img src="https://img.shields.io/npm/l/@YUDER-ALTCODE/openclaw-plugin-izipay?style=flat-square" alt="license">
+  </a>
+  <a href="https://clawhub.openclaw.ai/packages/@YUDER-ALTCODE/openclaw-plugin-izipay">
+    <img src="https://img.shields.io/badge/ClawHub-published-brightgreen?style=flat-square" alt="ClawHub">
+  </a>
+</p>
+
+---
+
+## Overview
+
+This plugin provides OpenClaw agents with native tools to interact with the [Izipay](https://izipay.pe) payment gateway. It supports two main operations:
 
 | Tool | Description |
 |------|-------------|
-| `izipay_create_payment` | Create a payment request, returns a formToken for the Izipay JavaScript SDK |
-| `izipay_create_payment_link` | Create a shareable payment link (WhatsApp, email, SMS, etc.) |
+| `izipay_create_payment` | Generate a `formToken` for embedding the Izipay JavaScript SDK checkout form |
+| `izipay_create_payment_link` | Create a shareable payment link (via WhatsApp, email, SMS, etc.) |
 
-- ✅ Sandbox & Production environments
-- ✅ Config via plugin config or env vars
-- ✅ Type-safe with TypeBox schemas (runtime validation + metadata)
-- ✅ Proper error classes (Auth, Network, API)
-- ✅ Ready for [ClawHub Marketplace](https://clawhub.openclaw.ai)
+## Architecture
+
+```
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│  OpenClaw Agent │────▶│  Izipay Plugin   │────▶│  Izipay API     │
+│                 │     │                  │     │                 │
+│  tools.*        │     │  Auth (Basic)    │     │  /CreatePayment │
+│                 │     │  Client          │     │  /Token/Generate│
+│                 │     │  Schemas (Zod)   │     │  /PaymentLink   │
+└─────────────────┘     └──────────────────┘     └─────────────────┘
+```
+
+**Authentication:**
+- `CreatePayment` → Basic Auth (`username:password`)
+- `Payment Links` → Bearer token via `/security/v1/Token/Generate`
 
 ## Installation
 
-### Via OpenClaw CLI (recommended)
-
 ```bash
+# From ClawHub (recommended)
+openclaw plugins install clawhub:@YUDER-ALTCODE/openclaw-plugin-izipay
+
 # From npm
 openclaw plugins install npm:@YUDER-ALTCODE/openclaw-plugin-izipay
-
-# From ClawHub
-openclaw plugins install clawhub:@YUDER-ALTCODE/openclaw-plugin-izipay
 ```
 
-### Manual (development)
+### Local Development
 
 ```bash
 git clone https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay
@@ -42,7 +68,7 @@ pnpm run build
 
 ## Configuration
 
-### Option 1: Plugin Config (openclaw.json)
+Add the following to your `openclaw.json`:
 
 ```json
 {
@@ -62,61 +88,60 @@ pnpm run build
 }
 ```
 
-### Option 2: Environment Variables
+Or use environment variables:
 
 ```bash
-# .env
 IZIPAY_USERNAME=YOUR_MERCHANT_CODE
 IZIPAY_PASSWORD=YOUR_SANDBOX_PASSWORD
 IZIPAY_PUBLIC_KEY=YOUR_API_KEY
 IZIPAY_ENVIRONMENT=sandbox
 ```
 
-> **Note**: Plugin config takes precedence over env vars.
+> Plugin config takes precedence over environment variables.
 
-### Where to Find Your Credentials
+### Getting Your Credentials
 
 1. Login to [Izipay Dashboard](https://dashboard.izipay.pe)
-2. Go to **Recursos** → **Credenciales**
-3. Copy your:
-   - **Usuario** (username)
+2. Navigate to **Recursos** → **Credenciales**
+3. Copy:
+   - **Usuario** (merchant code)
    - **Contraseña de test** (sandbox password)
    - **Clave API** for Payment Links (format: `XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`)
 
-## Usage
+## API Reference
 
-Once installed and configured, the tools are available to any OpenClaw agent:
+### `izipay_create_payment`
 
-### Create Payment (Form Token)
+Generates a `formToken` for use with the Izipay JavaScript SDK.
 
 ```typescript
-// Agent calls this tool to get a formToken for the Izipay JavaScript SDK
-await tools.izipay_create_payment({
+const result = await tools.izipay_create_payment({
   amount: 10000,           // Amount in cents (100.00 PEN)
   currency: "PEN",         // "PEN" or "USD"
-  orderId: "ORD-001",      // Your unique order ID
+  orderId: "ORD-001",      // Unique order identifier
   customerEmail: "cliente@ejemplo.com"
 });
 
-// Returns:
+// Response
 {
   status: "SUCCESS",
   formToken: "eyJhbGciOiJIUzI1NiIs..."
 }
 ```
 
-### Create Payment Link
+### `izipay_create_payment_link`
+
+Creates a shareable payment link with billing/shipping details.
 
 ```typescript
-// Agent creates a shareable payment link
-await tools.izipay_create_payment_link({
+const result = await tools.izipay_create_payment_link({
   merchantCode: "YOUR_MERCHANT_CODE",
   productDescription: "Camiseta Premium",
   amount: "10.50",
   currency: "PEN",
   expirationDate: "2026-12-31 23:59:00.000",
-  wayOfUse: "INDIVIDUAL",
-  payMethod: "CARD",
+  wayOfUse: "INDIVIDUAL",  // or "GENERAL" for reusable
+  payMethod: "CARD",       // "CARD", "QR", "YAPE_CODE", "PAGO_PUSH"
   billing: {
     firstName: "Juan",
     lastName: "Pérez",
@@ -130,52 +155,40 @@ await tools.izipay_create_payment_link({
     documentType: "DNI",
     document: "12345678"
   },
-  shipping: {
-    firstName: "Juan",
-    lastName: "Pérez",
-    email: "juan@example.com",
-    phoneNumber: "999999999",
-    street: "Av. Principal 123",
-    postalCode: "15001",
-    city: "Lima",
-    state: "Lima",
-    country: "PE",
-    documentType: "DNI",
-    document: "12345678"
-  }
+  shipping: { /* same structure as billing */ }
 });
 
-// Returns:
+// Response
 {
   status: "OK",
   paymentLinkId: "1450558deaf948f2a46a37ddfcd85ea1",
   paymentUrl: "https://paymentlink.izipay.pe/pay/2e3w70vcsoy",
   amount: "10.50",
   currency: "PEN",
-  state: "1"  // 1=GENERADO, 3=TERMINADO_EXITO, etc.
+  state: "1"
 }
 ```
 
-## Payment Link States
+### Payment Link States
 
-| State | Description |
-|-------|-------------|
-| `1` | GENERADO - Link created and active |
-| `3` | TERMINADO_EXITO - Payment completed successfully |
-| `4` | TERMINADO_ERROR - Payment error |
-| `5` | EXPIRADO - Link expired |
-| `6` | DESACTIVADO - Link deactivated |
+| Code | State | Description |
+|------|-------|-------------|
+| `1` | GENERADO | Link created and active |
+| `3` | TERMINADO_EXITO | Payment completed successfully |
+| `4` | TERMINADO_ERROR | Payment error |
+| `5` | EXPIRADO | Link expired |
+| `6` | DESACTIVADO | Link deactivated |
 
-## Error Handling
-
-Tools throw typed errors you can catch:
+### Error Handling
 
 ```typescript
+import { IzipayAuthError, IzipayApiError, IzipayNetworkError } from "@YUDER-ALTCODE/openclaw-plugin-izipay";
+
 try {
   await tools.izipay_create_payment_link({ ... });
 } catch (err) {
   if (err instanceof IzipayAuthError) {
-    // 401 - Invalid credentials or session token
+    // 401 - Invalid credentials or expired session token
   } else if (err instanceof IzipayApiError) {
     // API error - check err.message for details
   } else if (err instanceof IzipayNetworkError) {
@@ -187,23 +200,15 @@ try {
 ## Development
 
 ```bash
-# Install deps
-pnpm install
-
-# Run tests
-pnpm test
-
-# Build
-pnpm run build
+pnpm install        # Install dependencies
+pnpm test           # Run tests
+pnpm run build      # Build for production
 ```
 
 ## Publishing
 
 ```bash
-# Version bump
 pnpm version patch
-
-# Build + publish to ClawHub
 pnpm run build
 clawhub package publish . \
   --version <version> \
@@ -225,5 +230,5 @@ For questions or issues, open a [GitHub Issue](https://github.com/YUDER-ALTCODE/
 ## Related
 
 - [OpenClaw Documentation](https://docs.openclaw.ai)
-- [Izipay API Docs](https://developers.izipay.pe)
+- [Izipay API Documentation](https://developers.izipay.pe)
 - [ClawHub Marketplace](https://clawhub.openclaw.ai)
