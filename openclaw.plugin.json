@@ -12,11 +12,13 @@
         "id": "izipay",
         "envVars": [
           "IZIPAY_USERNAME",
-          "IZIPAY_PASSWORD"
+          "IZIPAY_PASSWORD",
+          "IZIPAY_PUBLIC_KEY"
         ],
         "configFields": [
           "username",
           "password",
+          "publicKey",
           "environment"
         ]
       }
@@ -25,7 +27,7 @@
   "uiHints": {
     "username": {
       "label": "Izipay Username",
-      "help": "Izipay user ID (fallback: IZIPAY_USERNAME env var). Found in dashboard under Configuración → API Keys",
+      "help": "Izipay user ID (fallback: IZIPAY_USERNAME env var). Found in dashboard under Recursos → Credenciales",
       "sensitive": false,
       "placeholder": "98671504"
     },
@@ -34,6 +36,12 @@
       "help": "Izipay password (fallback: IZIPAY_PASSWORD env var). Use test password for sandbox, production password for live",
       "sensitive": true,
       "placeholder": "testpassword_..."
+    },
+    "publicKey": {
+      "label": "Izipay API Public Key",
+      "help": "API key for Payment Links authentication (fallback: IZIPAY_PUBLIC_KEY env var). Found in dashboard under Recursos → Credenciales",
+      "sensitive": false,
+      "placeholder": "VErethUtraQuxas57wuMuquprADrAHAb"
     },
     "environment": {
       "label": "Environment",
@@ -63,6 +71,11 @@
         "minLength": 1,
         "description": "Izipay password (test or production)"
       },
+      "publicKey": {
+        "type": "string",
+        "minLength": 16,
+        "description": "API key for session token generation"
+      },
       "environment": {
         "anyOf": [
           {
@@ -78,7 +91,7 @@
     },
     "additionalProperties": false
   },
-  "version": "0.1.6",
+  "version": "0.2.0",
 "contracts": {
     "tools": ["izipay_create_payment", "izipay_create_payment_link"]
   }
