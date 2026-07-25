@@ -9,15 +9,10 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@YUDER-ALTCODE/openclaw-plugin-izipay">
-    <img src="https://img.shields.io/npm/v/@YUDER-ALTCODE/openclaw-plugin-izipay?style=flat-square&color=blue" alt="npm version">
-  </a>
-  <a href="https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay/blob/main/LICENSE">
-    <img src="https://img.shields.io/npm/l/@YUDER-ALTCODE/openclaw-plugin-izipay?style=flat-square" alt="license">
-  </a>
-  <a href="https://clawhub.openclaw.ai/packages/@YUDER-ALTCODE/openclaw-plugin-izipay">
-    <img src="https://img.shields.io/badge/ClawHub-published-brightgreen?style=flat-square" alt="ClawHub">
-  </a>
+  <a href="https://github.com/YUDER-ALTCODE/openclaw-plugin-izipay/releases"><img src="https://img.shields.io/github/v/release/YUDER-ALTCODE/openclaw-plugin-izipay?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
+  <a href="https://www.npmjs.com/package/@YUDER-ALTCODE/openclaw-plugin-izipay"><img src="https://img.shields.io/npm/v/@YUDER-ALTCODE/openclaw-plugin-izipay?style=for-the-badge&color=blue" alt="npm version"></a>
+  <a href="https://clawhub.openclaw.ai/packages/@YUDER-ALTCODE/openclaw-plugin-izipay"><img src="https://img.shields.io/badge/ClawHub-published-brightgreen?style=for-the-badge" alt="ClawHub"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
 </p>
 
 ---
