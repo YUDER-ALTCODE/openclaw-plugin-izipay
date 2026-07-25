@@ -1,7 +1,8 @@
 {
   "id": "izipay",
   "name": "Izipay Payments",
-  "description": "Integrate Izipay payment gateway for creating payments, checking status, and retrieving transaction details",
+  "description": "OpenClaw plugin for Izipay payment gateway integration. Provides agent tools to create payments and payment links.",
+  "icon": "https://cdn.simpleicons.org/creditcard/FF6B00",
   "kind": "tool",
   "activation": {
     "onStartup": true
@@ -91,7 +92,7 @@
     },
     "additionalProperties": false
   },
-  "version": "0.2.2",
+  "version": "0.2.3",
 "contracts": {
     "tools": ["izipay_create_payment", "izipay_create_payment_link"]
   }
